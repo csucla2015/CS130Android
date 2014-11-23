@@ -186,22 +186,27 @@ public class ExampleActivity extends Activity implements RdioListener {
 		//showGetHeavyRotationDialog();
 
 		List<NameValuePair> args = new LinkedList<NameValuePair>();
-		args.add(new BasicNameValuePair("query","shake"));
-		rdio.apiCall("searchSuggestions", args, new RdioApiCallback() {
+		args.add(new BasicNameValuePair("query","shake it off"));
+		args.add(new BasicNameValuePair("types","Album"));
+
+		rdio.apiCall("search", args, new RdioApiCallback() {
 			@Override
 			public void onApiSuccess(JSONObject result) {
 				try {
 					Log.v("meet", "doing some search");
 					//Log.i(TAG, "Heavy rotation: " + result.toString(2));
-					JSONArray albums = result.getJSONArray("result");
-					Log.v("meet",String.valueOf(albums.length()));
+					JSONObject jarr = result.getJSONObject("result");
+					Log.v("meet","length of object"+String.valueOf(jarr.length()));
+					JSONArray albums = jarr.getJSONArray("results");
+					Log.v("meet","length of albums" + String.valueOf(albums.length()));
 					final ArrayList<String> albumKeys = new ArrayList<String>(albums.length());
 					for (int i=0; i<albums.length(); i++) 
 					{
 						JSONObject album = albums.getJSONObject(i);
 						Log.v("meet",album.getString("key"));
-						String albumKey = album.getString("albumKey");
+						String albumKey = album.getString("key");
 						albumKeys.add(albumKey);
+						
 					}
 					// Build our argument to pass to the get api
 					StringBuffer keyBuffer = new StringBuffer();
@@ -250,10 +255,11 @@ public class ExampleActivity extends Activity implements RdioListener {
 										String artist = trackObject.getString("artist");
 										String albumName = trackObject.getString("album");
 										String albumArt = trackObject.getString("icon");
-										Log.d(TAG, "Found track: " + key + " => " + trackObject.getString("name"));
+										Log.d("meet", "Found track: " + key + " => " + trackObject.getString("name")+" " + artist);
 										trackKeys.add(new Track(key, name, artist, albumName, albumArt));
 									}
 								}
+								Log.v("meet",String.valueOf(trackKeys.size())+" "+ String.valueOf(albumKeys.size()));
 								if (trackKeys.size() > 1)
 									trackQueue.addAll(trackKeys);
 								dismissGetHeavyRotationDialog();
