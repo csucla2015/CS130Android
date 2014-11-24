@@ -186,8 +186,9 @@ public class ExampleActivity extends Activity implements RdioListener {
 		//showGetHeavyRotationDialog();
 
 		List<NameValuePair> args = new LinkedList<NameValuePair>();
-		args.add(new BasicNameValuePair("query","shake it off"));
-		args.add(new BasicNameValuePair("types","Album"));
+		args.add(new BasicNameValuePair("query","Wrecking Ball"));
+		args.add(new BasicNameValuePair("types","Track"));
+		final List<Track> trackKeys = new LinkedList<Track>();
 
 		rdio.apiCall("search", args, new RdioApiCallback() {
 			@Override
@@ -199,77 +200,33 @@ public class ExampleActivity extends Activity implements RdioListener {
 					Log.v("meet","length of object"+String.valueOf(jarr.length()));
 					JSONArray albums = jarr.getJSONArray("results");
 					Log.v("meet","length of albums" + String.valueOf(albums.length()));
+
 					final ArrayList<String> albumKeys = new ArrayList<String>(albums.length());
 					for (int i=0; i<albums.length(); i++) 
 					{
-						JSONObject album = albums.getJSONObject(i);
-						Log.v("meet",album.getString("key"));
-						String albumKey = album.getString("key");
-						albumKeys.add(albumKey);
+						JSONObject trackObject = albums.getJSONObject(i);
+						Log.v("meet","getting object");
+						Log.v("meet", "objecct"+ trackObject.toString());
+						String key = trackObject.getString("key");
+						Log.v("meet", "key"+ " "+key);
+						String name = trackObject.getString("name");
+						Log.v("meet", "name"+ " "+name);
+						String artist = trackObject.getString("artist");
+						Log.v("meet", "artist"+ " "+artist);						
+						String albumName = trackObject.getString("album");
+						Log.v("meet", "album"+ " "+albumName);
+						String albumArt = trackObject.getString("icon");
+						Log.v("meet", "art"+ " " + albumArt);
+
+						Log.d("meet", "Found track: " + key + " => " + trackObject.getString("name")+" " + artist);
+						trackKeys.add(new Track(key, name, artist, albumName, albumArt));
+						break;
 						
 					}
-					// Build our argument to pass to the get api
-					StringBuffer keyBuffer = new StringBuffer();
-					Iterator<String> iter = albumKeys.iterator();
-					while (iter.hasNext()) {
-						keyBuffer.append(iter.next());
-						if (iter.hasNext()) {
-							keyBuffer.append(",");
-						}
-					}
-					Log.i(TAG, "album keys to fetch: " + keyBuffer.toString());
-					List<NameValuePair> getArgs = new LinkedList<NameValuePair>();
-					getArgs.add(new BasicNameValuePair("keys", keyBuffer.toString()));
-					getArgs.add(new BasicNameValuePair("extras", "tracks"));
-
-					// Get more details (like tracks) for all the albums we parsed out of the heavy rotation
-					rdio.apiCall("get", getArgs, new RdioApiCallback() {
-						@Override
-						public void onApiFailure(String methodName, Exception e) 
-						{
-							Log.e(TAG, "get() failed!", e);
-						}
-						
-						@Override
-						public void onApiSuccess(JSONObject result) {
-							try {
-								//Log.i(TAG, "get result: " + result.toString(2));
-								result = result.getJSONObject("result");
-								List<Track> trackKeys = new LinkedList<Track>();
-
-								// Build our list of tracks to put into the player queue
-								for (String albumKey : albumKeys) 
-								{
-									if (!result.has(albumKey)) 
-									{
-										Log.w(TAG, "result didn't contain album key: " + albumKey);
-										continue;
-									}
-									JSONObject album = result.getJSONObject(albumKey);
-									JSONArray tracks = album.getJSONArray("tracks");
-									Log.i(TAG, "album " + albumKey + " has " + tracks.length() + " tracks");
-									for (int i=0; i<tracks.length(); i++) {
-										JSONObject trackObject = tracks.getJSONObject(i);
-										String key = trackObject.getString("key");
-										String name = trackObject.getString("name");
-										String artist = trackObject.getString("artist");
-										String albumName = trackObject.getString("album");
-										String albumArt = trackObject.getString("icon");
-										Log.d("meet", "Found track: " + key + " => " + trackObject.getString("name")+" " + artist);
-										trackKeys.add(new Track(key, name, artist, albumName, albumArt));
-									}
-								}
-								Log.v("meet",String.valueOf(trackKeys.size())+" "+ String.valueOf(albumKeys.size()));
-								if (trackKeys.size() > 1)
-									trackQueue.addAll(trackKeys);
-								dismissGetHeavyRotationDialog();
-
-								next(true);
-							} catch (Exception e) {
-								Log.e(TAG, "Failed to handle JSONObject: ", e);
-							}
-						}
-					});
+					if (trackKeys.size() > 0)
+						trackQueue.addAll(trackKeys);
+					dismissGetCollectionDialog();
+					next(true);
 				} catch (Exception e) {
 					Log.v("meet", "could not search");
 					Log.e(TAG, "Failed to handle JSONObject: ", e);
@@ -277,7 +234,6 @@ public class ExampleActivity extends Activity implements RdioListener {
 					dismissGetHeavyRotationDialog();
 				}
 			}
-
 			@Override
 			public void onApiFailure(String methodName, Exception e) {
 				//dismissGetHeavyRotationDialog();
@@ -285,7 +241,6 @@ public class ExampleActivity extends Activity implements RdioListener {
 			}
 		});
 	}
-
 	/**
 	 * Get the current user, and load their collection to start playback with.
 	 * Requires authorization and the Rdio app to be installed.
@@ -298,66 +253,7 @@ public class ExampleActivity extends Activity implements RdioListener {
 
 		doSomethingWithoutApp();
 		return;
-		// Get the current user so we can find out their user ID and get their collection key
-		
-	}
-
-	private void LoadMoreTracks() {
-		if (accessToken == null || accessTokenSecret == null) {
-			Log.i(TAG, "Anonymous user! No more tracks to play.");
-
-			// Notify the user we're out of tracks
-			Toast.makeText(this, getString(R.string.no_more_tracks), Toast.LENGTH_LONG).show();
-
-			// Then helpfully point them to the market to go install Rdio ;)
-			Intent installRdioIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pname:com.rdio.android.ui"));
-			installRdioIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			startActivity(installRdioIntent);
-
-			finish();
-			return;
-		}
-
-		showGetCollectionDialog();
-		List<NameValuePair> args = new LinkedList<NameValuePair>();
-		args.add(new BasicNameValuePair("keys", collectionKey));
-		args.add(new BasicNameValuePair("count", "50"));
-		rdio.apiCall("get", args, new RdioApiCallback() {
-			@Override
-			public void onApiFailure(String methodName, Exception e) {
-			//	dismissGetCollectionDialog();
-				Log.e(TAG, methodName + " failed: ", e);
-			}
-
-			@Override
-			public void onApiSuccess(JSONObject result) {
-				try {
-					result = result.getJSONObject("result");
-					result = result.getJSONObject(collectionKey);
-					List<Track> trackKeys = new LinkedList<Track>();
-					JSONArray tracks = result.getJSONArray("tracks");
-					for (int i=0; i<tracks.length(); i++) {
-						JSONObject trackObject = tracks.getJSONObject(i);
-						String key = trackObject.getString("key");
-						String name = trackObject.getString("name");
-						String artist = trackObject.getString("artist");
-						String album = trackObject.getString("album");
-						String albumArt = trackObject.getString("icon");
-						Log.d(TAG, "Found track: " + key + " => " + trackObject.getString("name"));
-						trackKeys.add(new Track(key, name, artist, album, albumArt));
-					}
-					if (trackKeys.size() > 1)
-						trackQueue.addAll(trackKeys);
-					dismissGetCollectionDialog();
-
-					next(true);
-
-				} catch (Exception e) {
-					dismissGetCollectionDialog();
-					Log.e(TAG, "Failed to handle JSONObject: ", e);
-				}
-			}
-		});
+		// Get the current user so we can find out their user ID and get their collection key		
 	}
 
 	private void next(final boolean manualPlay) {
@@ -370,7 +266,8 @@ public class ExampleActivity extends Activity implements RdioListener {
 		final Track track = trackQueue.poll();
 		if (trackQueue.size() < 0) {
 			Log.i(TAG, "Track queue depleted, loading more tracks");
-			LoadMoreTracks();
+			//LoadMoreTracks();
+			///We might use loadmoretracks later
 		}
 
 		if (track == null) {
@@ -560,7 +457,6 @@ public class ExampleActivity extends Activity implements RdioListener {
 		getUserDialog.setArguments(args);
 		getUserDialog.show(getFragmentManager(), "getUserDialog");
 	}
-
 	private void dismissGetUserDialog() {
 		if (getUserDialog != null) {
 			getUserDialog.dismiss();
