@@ -267,11 +267,28 @@ public class ExampleActivity extends Activity implements RdioListener {
 		final Track track = trackQueue.poll();
 		SharedPreferences settings2 = getApplicationContext().getSharedPreferences("com.meet.trill", 0);
    		String recentRequest = settings2.getString("request", "nothingexists");
-   		if(recentRequest.equalsIgnoreCase("nothingexists")==false)
+   		ArrayList<String> currentRequests = null;
+   		try {
+			currentRequests = (ArrayList<String>) ObjectSerializer.deserialize(settings2.getString("requests", ObjectSerializer.serialize(new ArrayList<String>())));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+//   		if(recentRequest.equalsIgnoreCase("nothingexists")==false)
+   		if(currentRequests.size() > 0)
    		{	
    			Log.v("meet", recentRequest);
-   			GetMoreTracks(recentRequest);
+   			GetMoreTracks(currentRequests.get(0));
+   			currentRequests.remove(0);
    			SharedPreferences.Editor editor3 = settings2.edit();
+			try {
+				editor3.putString("requests", ObjectSerializer.serialize(currentRequests));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
     		editor3.putString("request", "nothingexists");
     		editor3.apply();
    		}	

@@ -1,25 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/rdio_gradient">
-    <ImageView android:src="@drawable/logo"
-    	android:layout_width="wrap_content" android:layout_height="wrap_content"
-    	android:layout_marginLeft="5dp" android:layout_marginTop="5dp"
-    	android:layout_gravity="left" />
-    	
-    <ImageView android:id="@+id/albumArt" android:src="@drawable/blank_album_art"
-    	android:adjustViewBounds="true" android:scaleType="fitXY"
-    	android:layout_width="fill_parent" android:layout_height="wrap_content"
-    	android:layout_margin="5dp" />
+    android:background="#3B5998"
     
-    <LinearLayout android:id="@+id/playercontrols"
-    	android:orientation="horizontal"
-    	android:layout_width="fill_parent"
-    	android:layout_height="fill_parent"
-    	android:gravity="center_vertical|center_horizontal">
-		<ImageView android:id="@+id/playPause" android:src="@drawable/play" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-		<ImageView android:id="@+id/next" android:src="@drawable/next" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-   	</LinearLayout>
+    android:orientation="vertical" >
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical"
+        android:scaleType="fitXY"
+        android:src="@drawable/logo" />
+
+    <ImageView
+        android:id="@+id/albumArt"
+        android:layout_width="164dp"
+        android:layout_height="164dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical"
+        android:scaleType="fitXY"
+        android:src="@drawable/blank_album_art" />
+  <ScrollView
+    android:layout_width="fill_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    >
+    
+	<TableLayout
+	     android:textSize="16sp"
+	    
+	    android:layout_width="match_parent"
+	    android:layout_height="250dp"
+	    
+	    android:background="#99333333"
+	    android:layout_marginTop="10dp"
+    	android:layout_marginBottom="10dp"
+    	android:layout_marginLeft="10dp"
+    	android:layout_marginRight="10dp"
+    	android:padding="10dp"
+	    
+	    android:stretchColumns="1" >
+
+    
+
+    <TableRow android:padding="5dp" >
+        <TextView android:textSize = "16sp"
+            android:layout_column="1"
+            android:text="22 by Taylor Swift"
+            android:textColor="#eee"
+            android:padding="1dip" />
+        <TextView android:textSize = "16sp"
+            
+            android:text="Playing"
+            android:textColor="#eee"
+            android:layout_marginRight="16dp"
+            android:gravity="right"
+            />
+    </TableRow>
+
+    <TextView 
+
+    android:layout_width="308dp"
+    android:layout_height="1dp"
+    android:background="#f1f1f0"
+    android:layout_gravity="center_vertical|center_horizontal|center"
+    android:text=""
+    android:textSize="0.1dp" />
+    
+		    <TableRow android:padding="5dp" >
+        <TextView android:textSize = "16sp"
+            android:textColor="#eee"
+            android:layout_column="1"
+            android:text="Shake it off by Taylor Swift"
+            android:padding="1dip" />
+        <TextView android:textSize = "16sp"
+            android:text="Up Next"
+            android:gravity="right"
+            android:padding="1dip" />
+    </TableRow>
+
+
+    <TextView
+
+    android:layout_width="308dp"
+    android:layout_height="1dp"
+    android:background="#f1f1f0"
+    android:layout_gravity="center_vertical|center_horizontal|center"
+    android:text=""
+    android:textSize="0.1dp" />
+        <TableRow android:padding="5dp" >
+        <TextView android:textSize = "16sp"
+            android:textColor="#eee"
+            android:layout_column="1"
+            android:text="Halo by Beyonce"
+            android:padding="1dip" />
+        <TextView android:textSize = "16sp"
+            android:text="Queued up "
+            android:gravity="right"
+            android:padding="1dip" />
+    </TableRow>
+
+    <TextView
+
+    android:layout_width="308dp"
+    android:layout_height="1dp"
+    android:background="#f1f1f0"
+    android:layout_gravity="center_vertical|center_horizontal|center"
+    android:text=""
+    android:textSize="0.1dp" />
+        <TableRow android:padding="5dp" >
+        <TextView android:textSize = "16sp"
+            android:textColor="#eee"
+            android:layout_column="1"
+            android:text="Diamonds by Rihanna"
+            android:padding="1dip" />
+        <TextView android:textSize = "16sp"
+            android:text="Queued up"
+            android:gravity="right"
+            android:padding="1dip" />
+    </TableRow>
+
+    
+    <TextView 
+
+    android:layout_width="308dp"
+    android:layout_height="1dp"
+    android:background="#f1f1f0"
+    android:layout_gravity="center_vertical|center_horizontal|center"
+    android:text=""
+    android:textSize="0.1dp" />
+       <!-- 
+        <TableRow android:padding="5dp" >
+        <TextView android:textSize = "16sp"
+            android:layout_column="1"
+            android:text="Name of Song..."
+            android:padding="1dip" />
+        <TextView android:textSize = "16sp"
+            android:text="Playing"
+            android:gravity="right"
+            android:padding="1dip" />
+    </TableRow>
+
+    <View
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+        <TableRow android:padding="5dp" >
+        <TextView android:textSize = "16sp"
+            android:text="X"
+            android:padding="1dip" />
+        <TextView android:textSize = "16sp"
+            android:text="Import..."
+            android:padding="1dip" />
+    </TableRow>
+ 	<View
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+        <TableRow android:padding="5dp" >
+        <TextView android:textSize = "16sp"
+            android:text="X"
+            android:padding="1dip" />
+        <TextView android:textSize = "16sp"
+            android:text="Export..."
+            android:padding="1dip" />
+        <TextView android:textSize = "16sp"
+            android:text="Ctrl-E"
+            android:gravity="right"
+            android:padding="1dip" />
+    </TableRow>
+
+    <View
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+
+        <TableRow android:padding="5dp" >
+        <TextView android:textSize = "16sp"
+            android:layout_column="1"
+            android:text="Quit"
+            android:padding="1dip" />
+    </TableRow>
+ --> 
+</TableLayout>
+  </ScrollView>
+	
+    <LinearLayout
+        android:id="@+id/playercontrols"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/playPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/play" />
+
+        <ImageView
+            android:id="@+id/next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/next" />
+    </LinearLayout>
+
 </LinearLayout>

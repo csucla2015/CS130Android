@@ -1,4 +1,7 @@
 package com.meet.trill;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import android.app.IntentService;
 import android.content.Intent;
@@ -46,9 +49,26 @@ public class GcmMessageHandler extends IntentService {
                 Toast.makeText(getApplicationContext(),mes+"YPYPYP" , Toast.LENGTH_LONG).show();
                 SharedPreferences settings2 = getApplicationContext().getSharedPreferences("com.meet.trill", 0);
         		String recentRequest = settings2.getString("request", "nothingexists");
-        		
+        		ArrayList<String> currentRequests = null;
+                try {
+					currentRequests = (ArrayList<String>) ObjectSerializer.deserialize(settings2.getString("requests", ObjectSerializer.serialize(new ArrayList<String>())));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+                currentRequests.add(mes);
+                Log.v("meet","length of quee"+ String.valueOf(currentRequests.size()));
+               	
+
         		Log.v("meet", recentRequest);
         		SharedPreferences.Editor editor3 = settings2.edit();
+                try {
+					editor3.putString("requests", ObjectSerializer.serialize(currentRequests));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
         		editor3.putString("request", mes);
         		editor3.apply();
         	 recentRequest = settings2.getString("request", "nothingexists");
